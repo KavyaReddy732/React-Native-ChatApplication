@@ -1,0 +1,23 @@
+import React, {FC} from 'react';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import Home from '../Screens/Home';
+import Login from '../Screens/Login';
+import SignUp from '../Screens/SignUp';
+import ChatScreen from '../Screens/ChatScreen';
+const {Navigator, Screen} = createNativeStackNavigator();
+
+export type HomeStackParamList = {
+  home: undefined;
+  chat: undefined;
+};
+
+const AppStack: FC = () => {
+  return (
+    <Navigator screenOptions={{headerShown: false}}>
+      <Screen name="home" component={Home} />
+      <Screen name="chat" component={ChatScreen} />
+    </Navigator>
+  );
+};
+
+export default AppStack;

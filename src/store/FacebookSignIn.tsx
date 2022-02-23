@@ -1,0 +1,25 @@
+import Firebase from './Firebase';
+import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
+
+export const onFacebookButtonPress = async () => {
+  const {auth} = Firebase();
+  try {
+    const result = await LoginManager.logInWithPermissions([
+      'public_profile',
+      'email',
+    ]);
+    if (result.isCancelled) {
+      throw 'User cancelled the login process';
+    }
+    const data = await AccessToken.getCurrentAccessToken();
+    if (!data) {
+      throw 'Something went wrong obtaining access token';
+    }
+    const facebookCredential = auth.FacebookAuthProvider.credential(
+      data.accessToken,
+    );
+    return auth().signInWithCredential(facebookCredential);
+  } catch (error) {
+    console.log(error);
+  }
+};
