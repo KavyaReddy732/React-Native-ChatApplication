@@ -5,11 +5,10 @@ import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {AuthStackParamList} from '../Navigation/AuthStack';
 import {Button} from '../Components/Button';
-import firebase from '../store/Firebase';
-import Home from './Home';
-import useAuthStore from '../store/AuthStore';
-import {onGoogleButtonPress} from '../store/GoogleSignin';
-import {onFacebookButtonPress} from '../store/FacebookSignIn';
+import firebase from '../utils/Firebase';
+import useAuthStore from '../utils/AuthStore';
+import {onGoogleButtonPress} from '../utils/GoogleSignin';
+import {onFacebookButtonPress} from '../utils/FacebookSignIn';
 import {FirebaseAuthTypes} from '@react-native-firebase/auth';
 
 type authScreenProp = StackNavigationProp<AuthStackParamList, 'login'>;

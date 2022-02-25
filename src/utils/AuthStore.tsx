@@ -6,8 +6,8 @@ interface LoginState {
   isAuth: boolean | null;
   setIsAuth: (isAuth: any) => void;
   getStorage?: (() => StateStorage) | undefined;
-  // user: any;
-  // setUser: (user: any) => void;
+  userData: Object;
+  setUserData: (userData: any) => void;
 }
 
 const useAuthStore = create<LoginState>(
@@ -17,6 +17,12 @@ const useAuthStore = create<LoginState>(
       setIsAuth: isAuth => {
         set({isAuth});
       },
+      userData: {},
+      setUserData: userData =>
+        set(state => ({
+          ...state,
+          userData,
+        })),
     })),
     {name: 'Authentication', getStorage: () => AsyncStorage},
   ),

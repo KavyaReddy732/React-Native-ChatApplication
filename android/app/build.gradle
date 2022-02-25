@@ -204,6 +204,7 @@ dependencies {
     implementation 'com.facebook.android:facebook-android-sdk:latest.release'
     implementation 'com.facebook.android:facebook-login:latest.release'
     implementation "androidx.core:core-splashscreen:1.0.0-beta01"
+    implementation project(path: ":@react-native-firebase_messaging")
 
      implementation 'com.android.support:multidex:2.0.1'
 

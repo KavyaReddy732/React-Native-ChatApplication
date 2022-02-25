@@ -5,10 +5,10 @@ import Input from '../Components/Input';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {AuthStackParamList} from '../Navigation/AuthStack';
-import firebase from '../store/Firebase';
+import firebase from '../utils/Firebase';
 import {Button} from '../Components/Button';
 import firestore from '@react-native-firebase/firestore';
-import useAuthStore from '../store/AuthStore';
+import useAuthStore from '../utils/AuthStore';
 
 type authScreenProp = StackNavigationProp<AuthStackParamList, 'signup'>;
 

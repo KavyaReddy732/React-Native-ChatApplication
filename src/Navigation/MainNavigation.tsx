@@ -32,10 +32,10 @@
 
 import React, {FC, useEffect, useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import firebase from '../store/Firebase';
+import firebase from '../utils/Firebase';
 import AppStack from './AppStack';
 import AuthStack from './AuthStack';
-import useAuthStore from '../store/AuthStore';
+import useAuthStore from '../utils/AuthStore';
 
 const MainNavigation: FC = () => {
   const {isAuth} = useAuthStore();

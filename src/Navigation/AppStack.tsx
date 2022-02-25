@@ -8,12 +8,12 @@ const {Navigator, Screen} = createNativeStackNavigator();
 
 export type HomeStackParamList = {
   home: undefined;
-  chat: undefined;
+  chat: {userId: string | number};
 };
 
 const AppStack: FC = () => {
   return (
-    <Navigator screenOptions={{headerShown: false}}>
+    <Navigator>
       <Screen name="home" component={Home} />
       <Screen name="chat" component={ChatScreen} />
     </Navigator>

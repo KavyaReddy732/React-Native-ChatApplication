@@ -1,12 +1,13 @@
 import React, {useState, useEffect, useCallback, FC} from 'react';
-import {View, ScrollView, Text, Button, StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import {Bubble, GiftedChat, Send, User} from 'react-native-gifted-chat';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, RouteProp, useRoute} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {HomeStackParamList} from '../Navigation/AppStack';
 import firestore from '@react-native-firebase/firestore';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-// import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import useAuthStore from '../utils/AuthStore';
+import ImagePicker from 'react-native-image-picker';
 
 export type Props = {
   _id: string | number;
@@ -20,14 +21,27 @@ export interface GiftedProps {
 }
 
 type homeScreenProp = StackNavigationProp<HomeStackParamList, 'chat'>;
+type homeScreenRouteProp = RouteProp<HomeStackParamList, 'chat'>;
+
 const ChatScreen: FC<GiftedProps> = () => {
+  const navigation = useNavigation<homeScreenProp>();
+  const route = useRoute<homeScreenRouteProp>();
   const [messages, setMessages] = useState<Props[] | []>([]);
+  const [selectedPicture, setSelectedPictute] = useState<String>('');
   const db = firestore();
-  const chatsRef = db.collection('chats');
+  const {userData} = useAuthStore();
+  const {userId} = route.params;
+  console.log(messages);
 
   useEffect(() => {
+    const docid =
+      userId > userData.id
+        ? userData.id + '-' + userId
+        : userId + '-' + userData.id;
     firestore()
-      .collection('chats')
+      .collection('chat')
+      .doc(docid)
+      .collection('messages')
       .orderBy('createdAt', 'desc')
       .get()
       .then(querySnapshot => {
@@ -46,14 +60,21 @@ const ChatScreen: FC<GiftedProps> = () => {
     setMessages(previousMessages =>
       GiftedChat.append(previousMessages, messages),
     );
-    const {_id, createdAt, text, user} = messages[0];
+    const {_id, text, user} = messages[0];
+    const docid =
+      userId > userData.id
+        ? userData.id + '-' + userId
+        : userId + '-' + userData.id;
     firestore()
       .collection('chat')
+      .doc(docid)
+      .collection('messages')
       .add({
         _id,
-        createdAt,
+        createdAt: firestore.FieldValue.serverTimestamp(),
         text,
         user,
+        sentTo: userId,
       })
       .then(() => {
         console.log('chat added!');
@@ -66,9 +87,9 @@ const ChatScreen: FC<GiftedProps> = () => {
         <View>
           <MaterialCommunityIcons
             name="send-circle"
-            style={{marginBottom: 5, marginRight: 5}}
             size={32}
             color="#2e64e5"
+            style={{marginBottom: 5, marginRight: 5}}
           />
         </View>
       </Send>
@@ -93,17 +114,24 @@ const ChatScreen: FC<GiftedProps> = () => {
   };
 
   return (
-    <GiftedChat
-      messages={messages}
-      showAvatarForEveryMessage={false}
-      showUserAvatar={false}
-      onSend={messages => onSend(messages)}
-      messagesContainerStyle={{
-        backgroundColor: '#fff',
-      }}
-      renderSend={renderSend}
-      renderBubble={renderBubble}
-    />
+    <View style={{flex: 1, backgroundColor: 'white'}}>
+      <GiftedChat
+        messages={messages}
+        user={{
+          _id: userData.id,
+        }}
+        showAvatarForEveryMessage={false}
+        showUserAvatar={false}
+        onSend={messages => onSend(messages)}
+        messagesContainerStyle={{
+          backgroundColor: '#fff',
+        }}
+        alwaysShowSend
+        renderSend={renderSend}
+        scrollToBottom
+        renderBubble={renderBubble}
+      />
+    </View>
   );
 };
 
@@ -116,6 +144,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
-function readUser() {
-  throw new Error('Function not implemented.');
-}
+

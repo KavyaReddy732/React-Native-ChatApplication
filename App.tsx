@@ -117,12 +117,11 @@
 // export default App;
 
 import React, {FC, useEffect} from 'react';
-import './src/store/Firebase';
+import './src/utils/Firebase';
 import MainNavigation from './src/Navigation/MainNavigation';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {LogBox} from 'react-native';
 import RNBootSplash from 'react-native-bootsplash';
-
 LogBox.ignoreLogs(['EventEmitter.removeListener']);
 
 export type hide = (config?: {fade?: boolean}) => Promise<void>;

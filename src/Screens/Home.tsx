@@ -8,39 +8,49 @@ import {
   ListRenderItemInfo,
   Pressable,
   SafeAreaView,
+  Platform,
+  ActivityIndicator,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {HomeStackParamList} from '../Navigation/AppStack';
-import firebase from '../store/Firebase';
+import firebase from '../utils/Firebase';
 import firestore from '@react-native-firebase/firestore';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import useAuthStore from '../utils/AuthStore';
+import {ScrollView} from 'react-native-gesture-handler';
 import {Button} from '../Components/Button';
-import useAuthStore from '../store/AuthStore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type homeScreenProp = StackNavigationProp<HomeStackParamList, 'home'>;
 
 export type Props = {
   email: string;
   name: string;
-  id?: number;
+  id: string | number;
+};
+
+export type messageProps = {
+  sendTo: string | number;
+  text: string;
+  createdAt: Date | number;
 };
 
 const {width} = Dimensions.get('screen');
 
-const Home: FC<Props> = ({email, name, id}) => {
+const Home: FC<Props> = () => {
   const navigation = useNavigation<homeScreenProp>();
   const {auth} = firebase();
-  // const [userData, setUserData] = useState<Provider[]>([]);
-  const [userData, setUserData] = useState({email, name, id});
   const [allUsers, setAllUsers] = useState<any>();
-  const {setIsAuth} = useAuthStore();
-
-  console.log(allUsers);
+  const {setIsAuth, setUserData, userData} = useAuthStore();
+  const [loading, setLoading] = useState(true);
 
   const signOut = () => {
     auth()
       .signOut()
       .then(() => {
+        AsyncStorage.removeItem('Authentication');
         setIsAuth(false);
       });
   };
@@ -61,12 +71,15 @@ const Home: FC<Props> = ({email, name, id}) => {
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(documentSnapshot => {
-          data.push({
-            ...documentSnapshot.data(),
-            id: documentSnapshot.id,
-          });
+          if (documentSnapshot.id !== userData.id) {
+            data.push({
+              ...documentSnapshot.data(),
+              id: documentSnapshot.id,
+            });
+          }
         });
         setAllUsers(data);
+        setLoading(false);
       });
   };
 
@@ -75,6 +88,9 @@ const Home: FC<Props> = ({email, name, id}) => {
     allUser();
   }, []);
 
+  if (loading) {
+    return <ActivityIndicator size="large" color="black" />;
+  }
   return (
     <SafeAreaView
       style={{flex: 1, alignItems: 'center', backgroundColor: '#ffffff'}}>
@@ -84,9 +100,24 @@ const Home: FC<Props> = ({email, name, id}) => {
           renderItem={({item}: ListRenderItemInfo<Props>) => (
             <Pressable style={styles.card}>
               <View style={styles.UserInfo}>
+                <View style={styles.UserImgWrapper}>
+                  <AntDesign name="user" size={30} color="black" />
+                </View>
                 <View style={styles.TextSection}>
                   <Text style={styles.UserName}>{item.name}</Text>
                   <Text style={styles.UserName}>{item.email}</Text>
+                </View>
+                <View style={{marginRight: 180, alignSelf: 'center'}}>
+                  <MaterialCommunityIcons
+                    name="chevron-right"
+                    size={24}
+                    color="black"
+                    onPress={() =>
+                      navigation.navigate('chat', {
+                        userId: item.id,
+                      })
+                    }
+                  />
                 </View>
               </View>
             </Pressable>
@@ -95,8 +126,8 @@ const Home: FC<Props> = ({email, name, id}) => {
         />
         {/* <Text>Home</Text>
       <Text>{userData.email}</Text>
-      <Text>{userData.id}</Text>
-      <Button title="Sign Out" onPress={signOut} /> */}
+      <Text>{userData.id}</Text> */}
+        <Button title="Sign Out" onPress={signOut} />
       </View>
     </SafeAreaView>
   );
@@ -115,6 +146,8 @@ const styles = StyleSheet.create({
   },
   card: {
     width: width,
+    borderBottomWidth: 1,
+    borderBottomColor: '#cccccc',
   },
   UserInfo: {
     flexDirection: 'row',
@@ -123,20 +156,13 @@ const styles = StyleSheet.create({
   UserImgWrapper: {
     paddingVertical: 30,
   },
-  UserImg: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-  },
   TextSection: {
     flexDirection: 'column',
     justifyContent: 'center',
     padding: 15,
     paddingLeft: 0,
     marginLeft: 10,
-    width: 300,
-    borderBottomWidth: 1,
-    borderBottomColor: '#cccccc',
+    width: 280,
   },
   UserInfoText: {
     flexDirection: 'row',
