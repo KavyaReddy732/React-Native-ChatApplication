@@ -5,6 +5,7 @@ chat Application build with React Native and TypeScript
 # for Ios
 - cd ios && pod install (make sure you have cocopods installed)
 # run the app
+- yarn start to start the metro bundler
 - yarn run ios (for ios) / npx react-native run-ios
 - yarn run android (for android) / npx react-native run-ios
 
