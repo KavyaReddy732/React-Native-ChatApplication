@@ -2,7 +2,6 @@ import React, {FC} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Login from '../Screens/Login';
 import SignUp from '../Screens/SignUp';
-import Home from '../Screens/Home';
 const {Navigator, Screen} = createNativeStackNavigator();
 
 export type AuthStackParamList = {

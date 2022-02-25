@@ -39,20 +39,6 @@ import useAuthStore from '../utils/AuthStore';
 
 const MainNavigation: FC = () => {
   const {isAuth} = useAuthStore();
-  // const [user, setUser] = useState<any>(null);
-  // const {auth} = firebase();
-  console.log(isAuth);
-  // const AuthState = () => {
-  //   auth().onAuthStateChanged(_user => {
-  //     if (_user) {
-  //       setUser(_user);
-  //     }
-  //   });
-  // };
-
-  // useEffect(() => {
-  //   AuthState();
-  // }, []);
 
   return (
     <NavigationContainer>

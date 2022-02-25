@@ -169,16 +169,4 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 5,
   },
-  UserName: {
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  PostTime: {
-    fontSize: 12,
-    color: '#666',
-  },
-  MessageText: {
-    fontSize: 14,
-    color: '#333333',
-  },
 });
